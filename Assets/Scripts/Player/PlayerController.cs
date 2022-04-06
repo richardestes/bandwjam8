@@ -192,7 +192,7 @@ namespace TarodevController {
 
             // ATTN: Commented this out because it had a weird effect of slowing the character's horizontal
             // momentum to a complete stop after every jump. Without this check, running full speed and
-            // jumping feels much smoother. It might have to do with the size of the character sprites not 
+            // jumping feels much smoother. I think it might have to do with the size of the character sprites not 
             // agreeing with Unity physics, but for now there's no need to check for left and right collisons
             // in jumps.
 
