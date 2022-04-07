@@ -7,6 +7,7 @@ public class FinishLine : MonoBehaviour {
     [SerializeField] 
     private Vector2 _startPoint;
     private Vector2 _initialPosition;
+    private Quaternion _initialRotation;
     private bool _onFinalRun;
 
     public bool finishedLevel = false; // for testing, not needed once next level loads on finish
@@ -16,6 +17,7 @@ public class FinishLine : MonoBehaviour {
     private void Awake() {
         _onFinalRun = false;
         _initialPosition = transform.position;
+        _initialRotation = transform.rotation;
     }
 
     private void OnDrawGizmosSelected()
@@ -25,11 +27,14 @@ public class FinishLine : MonoBehaviour {
     }
 
     private void OnTriggerEnter2D(Collider2D col) {
+        if (col.name != "Player") return;
         if (finishedLevel) return;
         if (!_onFinalRun) // initial run
         {
             _onFinalRun = true;
-            transform.SetPositionAndRotation(_startPoint, new Quaternion(0, -180f, 0, 0));
+            float newRotation = Quaternion.identity.y;
+            newRotation = newRotation * -1;
+            transform.SetPositionAndRotation(_startPoint, new Quaternion(0, newRotation, 0, 0));
             print("On final run");
         }
         Crossed?.Invoke();
@@ -49,6 +54,6 @@ public class FinishLine : MonoBehaviour {
     {
         _onFinalRun = false;
         finishedLevel = false;
-        transform.SetPositionAndRotation(_initialPosition, new Quaternion(0, 0, 0, 0));
+        transform.SetPositionAndRotation(_initialPosition, _initialRotation);
     }
 }

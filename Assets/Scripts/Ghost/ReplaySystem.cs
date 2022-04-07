@@ -115,6 +115,7 @@ namespace TarodevGhost {
         private float _replaySmoothedTime;
 
         public bool playingReplay;
+        public float currentReplayDuration;
         public static event System.Action FinishedPlayingReplay;
 
         /// <summary>
@@ -138,6 +139,7 @@ namespace TarodevGhost {
             {
                 _ghostObj = ghostObj;
                 playingReplay = true;
+                currentReplayDuration = _currentReplay.Duration;
             }
 
             else if (_destroyOnComplete) Object.Destroy(_ghostObj);

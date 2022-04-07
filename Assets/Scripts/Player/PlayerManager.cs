@@ -24,13 +24,4 @@ public class PlayerManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R)) SceneManager.LoadScene(0);
     }
-
-    public void HandleDeath()
-    {
-        _sprite.enabled = false;
-        _controller.enabled = false;
-        _cam.transform.position = _cam.offset;
-        SceneManager.LoadScene(0);
-        Destroy(this);
-    }
 }

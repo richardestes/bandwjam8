@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 191439992457166877}
   - component: {fileID: 191439992457166850}
+  - component: {fileID: 6822059069581900402}
   m_Layer: 6
   m_Name: Block (4)
-  m_TagString: Untagged
+  m_TagString: Invertable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -82,6 +83,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6822059069581900402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191439992457166876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fa1b3818486656459bd86302a84c31d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _defaultSprite: {fileID: 21300000, guid: e8cd6bd5d168df149b90065102e621fa, type: 3}
+  _invertedSprite: {fileID: 21300000, guid: 0d6b9293721a4544bae75c9d3ee81d5c, type: 3}
 --- !u!1 &191439992510602406
 GameObject:
   m_ObjectHideFlags: 0
@@ -92,9 +107,10 @@ GameObject:
   m_Component:
   - component: {fileID: 191439992510602407}
   - component: {fileID: 191439992510602404}
+  - component: {fileID: 1343021937043378469}
   m_Layer: 6
   m_Name: Block (2)
-  m_TagString: Untagged
+  m_TagString: Invertable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -164,6 +180,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1343021937043378469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191439992510602406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fa1b3818486656459bd86302a84c31d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _defaultSprite: {fileID: 21300000, guid: e8cd6bd5d168df149b90065102e621fa, type: 3}
+  _invertedSprite: {fileID: 21300000, guid: 0d6b9293721a4544bae75c9d3ee81d5c, type: 3}
 --- !u!1 &191439993158967433
 GameObject:
   m_ObjectHideFlags: 0
@@ -235,9 +265,10 @@ GameObject:
   m_Component:
   - component: {fileID: 191439993462100856}
   - component: {fileID: 191439993462100857}
+  - component: {fileID: 6823334356715000134}
   m_Layer: 6
   m_Name: Block
-  m_TagString: Untagged
+  m_TagString: Invertable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -307,6 +338,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6823334356715000134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191439993462100859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fa1b3818486656459bd86302a84c31d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _defaultSprite: {fileID: 21300000, guid: e8cd6bd5d168df149b90065102e621fa, type: 3}
+  _invertedSprite: {fileID: 21300000, guid: 0d6b9293721a4544bae75c9d3ee81d5c, type: 3}
 --- !u!1 &191439993874985240
 GameObject:
   m_ObjectHideFlags: 0
@@ -317,9 +362,10 @@ GameObject:
   m_Component:
   - component: {fileID: 191439993874985241}
   - component: {fileID: 191439993874985246}
+  - component: {fileID: 2258930068318711612}
   m_Layer: 6
   m_Name: Block (1)
-  m_TagString: Untagged
+  m_TagString: Invertable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -389,3 +435,17 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2258930068318711612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191439993874985240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fa1b3818486656459bd86302a84c31d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _defaultSprite: {fileID: 21300000, guid: e8cd6bd5d168df149b90065102e621fa, type: 3}
+  _invertedSprite: {fileID: 21300000, guid: 0d6b9293721a4544bae75c9d3ee81d5c, type: 3}

@@ -4,16 +4,17 @@ using TMPro;
 public class Timer : MonoBehaviour
 {
     [SerializeField]
-    private bool countDown = true;
-    private bool stopped = false;
+    private bool _countDown = true;
+    private bool _stopped = false;
     
     [SerializeField]
-    private float timeDuration = 3f;
+    private float _timeDuration = 60f;
+    private float _initialTime;
 
-    private float timer;
-    private float flashTimer;
-    private float flashDuration = 1f;
-    private float finishTime;
+    private float _timer;
+    private float _flashTimer;
+    private float _flashDuration = 1f;
+    private float _finishTime;
 
     [SerializeField]
     private TextMeshProUGUI firstMinute;
@@ -29,20 +30,24 @@ public class Timer : MonoBehaviour
     void Start()
     {
         ResetTimer();
+        _initialTime = _timeDuration;
     }
 
     void Update()
     {
-        if (stopped) return;
-        if (countDown && timer > 0)
+        if (_countDown && _timer > 0 && !_stopped)
         {
-            timer -= Time.deltaTime;
-            UpdateTimerDisplay(timer);
+            _timer -= Time.deltaTime;
+            UpdateTimerDisplay(_timer);
         }
-        else if (!countDown && timer < timeDuration)
+        else if (!_countDown && _timer < _timeDuration && !_stopped)
         {
-            timer += Time.deltaTime;
-            UpdateTimerDisplay(timer);
+            _timer += Time.deltaTime;
+            UpdateTimerDisplay(_timer);
+        }
+        else if (_stopped && _timer > 0)
+        {
+            Flash();
         }
         else
         {
@@ -52,25 +57,54 @@ public class Timer : MonoBehaviour
 
     public void StopTimer()
     {
-        stopped = true;
-        finishTime = timer;
+        _stopped = true;
+        _finishTime = _timer;
     }
 
     public string GetFinishTime()
     {
-        float minutes = Mathf.FloorToInt(finishTime / 60);
-        float seconds = Mathf.FloorToInt(finishTime % 60);
+        float minutes = Mathf.FloorToInt(_finishTime / 60);
+        float seconds = Mathf.FloorToInt(_finishTime % 60);
 
         string finishTimeString = string.Format("{00:00}{1:00}", minutes, seconds);
         return finishTimeString;
     }
 
-    private void ResetTimer()
+    public void ResetTimer()
     {
-        if (countDown) timer = timeDuration;
-        else timer = 0;
+        //if (_countDown) _timer = _initialTime;
+        //else _timer = 0;
+        _timer = _initialTime;
+        ResetTimerColors();
+        _stopped = false;
+        _countDown = true;
         SetTextDisplay(true);
     }   
+
+    public void SetTimer(float duration)
+    {
+        if (_countDown) _timer = duration;
+        else _timer = 0;
+        SetTextDisplay(true);
+    }
+
+    private void ResetTimerColors()
+    {
+        firstMinute.color = Color.black;
+        secondMinute.color = Color.black;
+        seperator.color = Color.black;
+        firstSecond.color = Color.black;
+        secondSecond.color = Color.black;
+    }
+
+    public void InvertTimerColors()
+    {
+        firstMinute.color = Color.white;
+        secondMinute.color = Color.white;
+        seperator.color = Color.white;
+        firstSecond.color = Color.white;
+        secondSecond.color = Color.white;
+    }
 
     private void UpdateTimerDisplay(float time)
     {
@@ -87,30 +121,30 @@ public class Timer : MonoBehaviour
 
     private void Flash()
     {
-        if (countDown && timer != 0)
+        if (_countDown && _timer != 0)
         {
-            timer = 0;
-            UpdateTimerDisplay(timer);
+            //_timer = 0;
+            UpdateTimerDisplay(_timer);
         }
 
-        if (!countDown && timer != timeDuration)
+        if (!_countDown && _timer != _timeDuration)
         {
-            timer = timeDuration;
-            UpdateTimerDisplay(timer);
+            _timer = _timeDuration;
+            UpdateTimerDisplay(_timer);
         }
 
-        if (flashTimer <= 0)
+        if (_flashTimer <= 0)
         {
-            flashTimer = flashDuration;
+            _flashTimer = _flashDuration;
         } 
-        else if (flashTimer >= flashDuration / 2)
+        else if (_flashTimer >= _flashDuration / 2)
         {
-            flashTimer -= Time.deltaTime;
+            _flashTimer -= Time.deltaTime;
             SetTextDisplay(false);
         }
         else
         {
-            flashTimer -= Time.deltaTime;
+            _flashTimer -= Time.deltaTime;
             SetTextDisplay(true);
         }
     }
