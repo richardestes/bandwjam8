@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-
 
 namespace TarodevController {
     /// <summary>
@@ -15,8 +12,9 @@ namespace TarodevController {
     /// </summary>
     [RequireComponent(typeof(BoxCollider2D), typeof(Rigidbody2D))]
     public class PlayerController : MonoBehaviour, IPlayerController {
-        [SerializeField] private bool _allowDoubleJump, _allowDash;
-        
+        [SerializeField] private bool _allowDoubleJump, _allowDash, _allowCrouch;
+
+
         // Public for external hooks
         public FrameInput Input { get; private set; }
         public Vector3 RawMovement { get; private set; }
@@ -24,41 +22,43 @@ namespace TarodevController {
         public event Action<bool> OnGroundedChanged;
         public event Action OnJumping, OnDoubleJumping;
         public event Action<bool> OnDashingChanged;
-        
+        public event Action<bool> OnCrouchingChanged;
+
+
         private Rigidbody2D _rb;
         private BoxCollider2D _collider;
         private Vector3 _lastPosition;
         private Vector3 _velocity;
         private float _currentHorizontalSpeed, _currentVerticalSpeed;
         private int _fixedFrame;
-        
+
         void Awake() {
             _rb = GetComponent<Rigidbody2D>();
             _collider = GetComponent<BoxCollider2D>();
+
+            _defaultColliderSize = _collider.size;
+            _defaultColliderOffset = _collider.offset;
         }
 
-        private void Update() {
-            // Calculate velocity
-            _velocity = (transform.position - _lastPosition) / Time.deltaTime;
-            _lastPosition = transform.position;
-
-            GatherInput();
-            
-        }
+        private void Update() => GatherInput();
 
         void FixedUpdate() {
             _fixedFrame++;
+            _frameClamp = _moveClamp;
+
+            // Calculate velocity
+            _velocity = (_rb.position - (Vector2)_lastPosition) / Time.fixedDeltaTime;
+            _lastPosition = _rb.position;
 
             RunCollisionChecks();
 
-            CalculateWalk();
+            CalculateCrouch();
+            CalculateHorizontal();
             CalculateJumpApex();
             CalculateGravity();
             CalculateJump();
             CalculateDash();
             MoveCharacter();
-            ResetRotation();
-
         }
 
         #region Gather Input
@@ -68,6 +68,7 @@ namespace TarodevController {
                 JumpDown = UnityEngine.Input.GetButtonDown("Jump"),
                 JumpHeld = UnityEngine.Input.GetButton("Jump"),
                 DashDown = UnityEngine.Input.GetButtonDown("Dash"),
+
                 X = UnityEngine.Input.GetAxisRaw("Horizontal"),
                 Y = UnityEngine.Input.GetAxisRaw("Vertical")
             };
@@ -78,24 +79,17 @@ namespace TarodevController {
                 _jumpToConsume = true;
             }
         }
-        
-        void ResetRotation()
-        {         
-            // Prevent z axis rotation
-            Quaternion quat = transform.rotation;
-            quat.eulerAngles = new Vector3(quat.eulerAngles.x, quat.eulerAngles.y, 0);
-            transform.rotation = quat;
-        }
 
         #endregion
-        
+
         #region Collisions
 
         [Header("COLLISION")] [SerializeField] private LayerMask _groundLayer;
-        [SerializeField] private int _detectorCount = 3;
         [SerializeField] private float _detectionRayLength = 0.1f;
-
-        private RayRange _raysUp, _raysRight, _raysDown, _raysLeft;
+        private RaycastHit2D[] _hitsDown = new RaycastHit2D[1];
+        private RaycastHit2D[] _hitsUp = new RaycastHit2D[1];
+        private RaycastHit2D[] _hitsLeft = new RaycastHit2D[1];
+        private RaycastHit2D[] _hitsRight = new RaycastHit2D[1];
 
         private bool _hittingCeiling, _grounded, _colRight, _colLeft;
 
@@ -105,10 +99,11 @@ namespace TarodevController {
         // We use these raycast checks for pre-collision information
         private void RunCollisionChecks() {
             // Generate ray ranges. 
-            CalculateRayRanged();
+            var b = _collider.bounds;
 
             // Ground
-            var groundedCheck = RunDetection(_raysDown);
+            var groundedCheck = RunDetection(Vector2.down, out _hitsDown);
+
             if (_grounded && !groundedCheck) {
                 _timeLeftGrounded = _fixedFrame; // Only trigger when first leaving
                 OnGroundedChanged?.Invoke(false);
@@ -122,64 +117,104 @@ namespace TarodevController {
             }
 
             _grounded = groundedCheck;
-            _colLeft = RunDetection(_raysLeft);
-            _colRight = RunDetection(_raysRight);
+            _colLeft = RunDetection(Vector2.left, out _hitsLeft);
+            _colRight = RunDetection(Vector2.right, out _hitsRight);
 
             // The rest
-            _hittingCeiling = RunDetection(_raysUp);
+            _hittingCeiling = RunDetection(Vector2.up, out _hitsUp);
 
-            bool RunDetection(RayRange range) {
-                return EvaluateRayPositions(range).Any(point => Physics2D.Raycast(point, range.Dir, _detectionRayLength, _groundLayer));
-            }
-        }
+            bool RunDetection(Vector2 dir, out RaycastHit2D[] hits) {
+                // Array.Clear(hits, 0, hits.Length);
+                // Physics2D.BoxCastNonAlloc(b.center, b.size, 0, dir, hits, _detectionRayLength, _groundLayer);
 
-        private void CalculateRayRanged() {
-            var b = _collider.bounds;
-
-            _raysDown = new RayRange(b.min.x, b.min.y, b.max.x, b.min.y, Vector2.down);
-            _raysUp = new RayRange(b.min.x, b.max.y, b.max.x, b.max.y, Vector2.up);
-            _raysLeft = new RayRange(b.min.x, b.min.y, b.min.x, b.max.y, Vector2.left);
-            _raysRight = new RayRange(b.max.x, b.min.y, b.max.x, b.max.y, Vector2.right);
-        }
-
-
-        private IEnumerable<Vector2> EvaluateRayPositions(RayRange range) {
-            for (var i = 0; i < _detectorCount; i++) {
-                var t = (float)i / (_detectorCount - 1);
-                yield return Vector2.Lerp(range.Start, range.End, t);
+                // This produces garbage, but is significantly more performant. Also less buggy.
+                hits = Physics2D.BoxCastAll(b.center, b.size, 0, dir, _detectionRayLength, _groundLayer);
+                
+                foreach (var hit in hits)
+                    if (hit.collider && !hit.collider.isTrigger)
+                        return true;
+                return false;
             }
         }
 
         private void OnDrawGizmos() {
             if (!_collider) _collider = GetComponent<BoxCollider2D>();
 
-            // Rays
-            if (!Application.isPlaying) CalculateRayRanged();
             Gizmos.color = Color.blue;
-            foreach (var range in new List<RayRange> { _raysDown, _raysUp }) {
-                foreach (var point in EvaluateRayPositions(range)) {
-                    Gizmos.DrawRay(point, range.Dir * _detectionRayLength);
-                }
+            var b = _collider.bounds;
+            b.Expand(_detectionRayLength);
+
+            Gizmos.DrawWireCube(b.center, b.size);
+        }
+
+        #endregion
+
+        #region Crouch
+
+        [SerializeField, Header("CROUCH")] private float _crouchSizeModifier = 0.5f;
+        [SerializeField] private float _crouchSpeedModifier = 0.1f;
+        [SerializeField] private int _crouchSlowdownFrames = 50;
+        [SerializeField] private float _immediateCrouchSlowdownThreshold = 0.1f;
+        private Vector2 _defaultColliderSize, _defaultColliderOffset;
+        private float _velocityOnCrouch;
+        private bool _crouching;
+        private int _frameStartedCrouching;
+
+        private bool CanStand => Physics2D.OverlapBox((Vector2)transform.position + _defaultColliderOffset, _defaultColliderSize * 0.95f, 0, _groundLayer) == null;
+
+        void CalculateCrouch() {
+            if (!_allowCrouch) return;
+
+
+            if (_crouching) {
+                var immediate = _velocityOnCrouch <= _immediateCrouchSlowdownThreshold ? _crouchSlowdownFrames : 0;
+                var crouchPoint = Mathf.InverseLerp(0, _crouchSlowdownFrames, _fixedFrame - _frameStartedCrouching + immediate);
+                _frameClamp *= Mathf.Lerp(1, _crouchSpeedModifier, crouchPoint);
+            }
+
+            if (_grounded && Input.Y < 0 && !_crouching) {
+                _crouching = true;
+                OnCrouchingChanged?.Invoke(true);
+                _velocityOnCrouch = Mathf.Abs(_velocity.x);
+                _frameStartedCrouching = _fixedFrame;
+
+                _collider.size = _defaultColliderSize * new Vector2(1, _crouchSizeModifier);
+
+                // Lower the collider by the difference extent
+                var difference = _defaultColliderSize.y - (_defaultColliderSize.y * _crouchSizeModifier);
+                _collider.offset = -new Vector2(0, difference * 0.5f);
+            }
+            else if (!_grounded || (Input.Y >= 0 && _crouching)) {
+                // Detect obstruction in standing area. Add a .1 y buffer to avoid the ground.
+                if (!CanStand) return;
+
+                _crouching = false;
+                OnCrouchingChanged?.Invoke(false);
+
+                _collider.size = _defaultColliderSize;
+                _collider.offset = _defaultColliderOffset;
             }
         }
 
         #endregion
 
+        #region Horizontal
 
-        #region Walk
-
-        [Header("WALKING")] [SerializeField] private float _acceleration = 90;
+        [Header("WALKING")] [SerializeField] private float _acceleration = 120;
         [SerializeField] private float _moveClamp = 13;
-        [SerializeField] private float _deAcceleration = 60f;
-        [SerializeField] private float _apexBonus = 2;
+        [SerializeField] private float _deceleration = 60f;
+        [SerializeField] private float _apexBonus = 100;
 
-        private void CalculateWalk() {
+        private float _frameClamp;
+
+        private void CalculateHorizontal() {
             if (Input.X != 0) {
                 // Set horizontal move speed
-                _currentHorizontalSpeed += Input.X * _acceleration * Time.fixedDeltaTime;
+                _currentHorizontalSpeed = Mathf.MoveTowards(_currentHorizontalSpeed, _frameClamp * Input.X, _acceleration * Time.fixedDeltaTime);
 
-                // clamped by max frame movement
-                _currentHorizontalSpeed = Mathf.Clamp(_currentHorizontalSpeed, -_moveClamp, _moveClamp);
+                // Clamped by max frame movement
+                // Only needed if Mathf.Abs(Input.X) > 1
+                _currentHorizontalSpeed = Mathf.Clamp(_currentHorizontalSpeed, -_frameClamp, _frameClamp);
 
                 // Apply bonus at the apex of a jump
                 var apexBonus = Mathf.Sign(Input.X) * _apexBonus * _apexPoint;
@@ -187,30 +222,24 @@ namespace TarodevController {
             }
             else {
                 // No input. Let's slow the character down
-                _currentHorizontalSpeed = Mathf.MoveTowards(_currentHorizontalSpeed, 0, _deAcceleration * Time.fixedDeltaTime);
+                _currentHorizontalSpeed = Mathf.MoveTowards(_currentHorizontalSpeed, 0, _deceleration * Time.fixedDeltaTime);
             }
 
-            // ATTN: Commented this out because it had a weird effect of slowing the character's horizontal
-            // momentum to a complete stop after every jump. Without this check, running full speed and
-            // jumping feels much smoother. I think it might have to do with the size of the character sprites not 
-            // agreeing with Unity physics, but for now there's no need to check for left and right collisons
-            // in jumps.
-
-            //if (_currentHorizontalSpeed > 0 && _colRight || _currentHorizontalSpeed < 0 && _colLeft) {
-            //    // Don't pile up useless horizontal
-            //    _currentHorizontalSpeed = 0;
-            //}
+            if (_currentHorizontalSpeed > 0 && _colRight || _currentHorizontalSpeed < 0 && _colLeft) {
+                // Don't pile up useless horizontal
+                _currentHorizontalSpeed = 0;
+            }
         }
 
         #endregion
 
         #region Gravity
 
-        [Header("GRAVITY")] [SerializeField] private float _fallClamp = -40f;
+        [Header("GRAVITY")] [SerializeField] private float _fallClamp = -60f;
         [SerializeField] private float _minFallSpeed = 80f;
-        [SerializeField] private float _maxFallSpeed = 120f;
+        [SerializeField] private float _maxFallSpeed = 160f;
+        [SerializeField] private float _groundedSpeed = -5;
         private float _fallSpeed;
-
 
         private void CalculateGravity() {
             if (_grounded) {
@@ -235,8 +264,8 @@ namespace TarodevController {
 
         #region Jump
 
-        [Header("JUMPING")] [SerializeField] public float jumpHeight = 30;
-        [SerializeField] private float _jumpApexThreshold = 10f;
+        [Header("JUMPING")] [SerializeField] private float _jumpHeight = 35;
+        [SerializeField] private float _jumpApexThreshold = 40f;
         [SerializeField] private int _coyoteTimeThreshold = 7;
         [SerializeField] private int _jumpBuffer = 7;
         [SerializeField] private float _jumpEndEarlyGravityModifier = 3;
@@ -248,12 +277,9 @@ namespace TarodevController {
         private float _lastJumpPressed = Single.MinValue;
         private bool _doubleJumpUsable;
         private bool CanUseCoyote => _coyoteUsable && !_grounded && _timeLeftGrounded + _coyoteTimeThreshold > _fixedFrame;
-        private bool HasBufferedJump => (_grounded || _cornerStuck) && _lastJumpPressed + _jumpBuffer > _fixedFrame && !_executedBufferedJump;
+        private bool HasBufferedJump => ((_grounded && !_executedBufferedJump) || _cornerStuck) && _lastJumpPressed + _jumpBuffer > _fixedFrame;
         private bool CanDoubleJump => _allowDoubleJump && _doubleJumpUsable && !_coyoteUsable;
 
-        
-        // Apex Modifiers: At the apex of your jump, the player is given a moment of antigravity as well as a
-        // minor speed boost. This gives you greater jump control.
         private void CalculateJumpApex() {
             if (!_grounded) {
                 // Gets stronger the closer to the top of the jump
@@ -266,8 +292,10 @@ namespace TarodevController {
         }
 
         private void CalculateJump() {
+            if (_crouching && !CanStand) return;
+
             if (_jumpToConsume && CanDoubleJump) {
-                _currentVerticalSpeed = jumpHeight;
+                _currentVerticalSpeed = _jumpHeight;
                 _doubleJumpUsable = false;
                 _endedJumpEarly = false;
                 _jumpToConsume = false;
@@ -277,7 +305,7 @@ namespace TarodevController {
 
             // Jump if: grounded or within coyote threshold || sufficient jump buffer
             if ((_jumpToConsume && CanUseCoyote) || HasBufferedJump) {
-                _currentVerticalSpeed = jumpHeight;
+                _currentVerticalSpeed = _jumpHeight;
                 _endedJumpEarly = false;
                 _coyoteUsable = false;
                 _jumpToConsume = false;
@@ -296,24 +324,22 @@ namespace TarodevController {
 
         #region Dash
 
-        [Header("DASH")] [SerializeField] public float dashPower = 50;
-        [SerializeField] private int _dashLength = 3;
+        [Header("DASH")] [SerializeField] private float _dashPower = 30;
+        [SerializeField] private int _dashLength = 6;
         [SerializeField] private float _dashEndHorizontalMultiplier = 0.25f;
         private float _startedDashing;
         private bool _canDash;
         private Vector2 _dashVel;
-
 
         private bool _dashing;
         private bool _dashToConsume;
 
         void CalculateDash() {
             if (!_allowDash) return;
-            if (_dashToConsume && _canDash) {
-                _dashToConsume = false;
+            if (_dashToConsume && _canDash && !_crouching) {
                 var vel = new Vector2(Input.X, _grounded && Input.Y < 0 ? 0 : Input.Y);
                 if (vel == Vector2.zero) return;
-                _dashVel = vel * dashPower;
+                _dashVel = vel * _dashPower;
                 _dashing = true;
                 OnDashingChanged?.Invoke(true);
                 _canDash = false;
@@ -327,11 +353,13 @@ namespace TarodevController {
                 if (_startedDashing + _dashLength < _fixedFrame) {
                     _dashing = false;
                     OnDashingChanged?.Invoke(false);
-                    _currentVerticalSpeed = 0;
+                    if (_currentVerticalSpeed > 0) _currentVerticalSpeed = 0;
                     _currentHorizontalSpeed *= _dashEndHorizontalMultiplier;
                     if (_grounded) _canDash = true;
                 }
             }
+
+            _dashToConsume = false;
         }
 
         #endregion
@@ -342,6 +370,9 @@ namespace TarodevController {
         private void MoveCharacter() {
             RawMovement = new Vector3(_currentHorizontalSpeed, _currentVerticalSpeed); // Used externally
             var move = RawMovement * Time.fixedDeltaTime;
+
+            // Apply effectors
+            move -= EvaluateEffectors();
 
             _rb.MovePosition(_rb.position + (Vector2)move);
 
@@ -366,6 +397,40 @@ namespace TarodevController {
         }
 
         #endregion
+
+        #endregion
+
+        #region Effectors
+
+        private readonly List<IPlayerEffector> _usedEffectors = new List<IPlayerEffector>();
+
+        /// <summary>
+        /// This allows a variety of movement modifications to be handled externally. Keeping this controller free
+        /// of unique logic like underwater, wind, boosters, gravity zones, etc
+        /// </summary>
+        /// <returns></returns>
+        private Vector3 EvaluateEffectors() {
+            var effectorDirection = Vector3.zero;
+            // Repeat this for other directions and possibly even area effectors. Wind zones, underwater etc
+            effectorDirection += Process(_hitsDown);
+
+            _usedEffectors.Clear();
+            return effectorDirection;
+
+            Vector3 Process(IEnumerable<RaycastHit2D> hits) {
+                foreach (var hit2D in hits) {
+                    if (!hit2D.transform) return Vector3.zero;
+                    if (hit2D.transform.TryGetComponent(out IPlayerEffector effector)) {
+                        if (_usedEffectors.Contains(effector)) continue;
+                        _usedEffectors.Add(effector);
+                        return effector.EvaluateEffector();
+                    }
+                }
+
+
+                return Vector3.zero;
+            }
+        }
 
         #endregion
     }

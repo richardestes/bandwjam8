@@ -45,4 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _recordTarget: {fileID: 0}
   _ghostPrefab: {fileID: 3606004815601483058, guid: cf8f11266dde546418896b05c49be361, type: 3}
-  _captureEveryNFrames: 4
+  _captureEveryNFrames: 2
+  _finishLine: {fileID: 0}
+  _respawn: {fileID: 0}
+  _timer: {fileID: 0}

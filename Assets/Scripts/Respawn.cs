@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -8,9 +7,11 @@ public class Respawn : MonoBehaviour {
     [SerializeField] 
     private Vector2 _respawnPoint;
     [SerializeField] 
-    private float _penaltyTime = 1;
+    private float _penaltyTime = 0.5f;
     [SerializeField]
     private GhostRunner _ghostRunner;
+    [SerializeField]
+    private MusicManager _musicManager;
     private float _timeStartedPenalty;
 
     private void OnTriggerEnter2D(Collider2D col) {
@@ -20,7 +21,8 @@ public class Respawn : MonoBehaviour {
     public IEnumerator RespawnPlayer() {
         _timeStartedPenalty = Time.time;
         _ghostRunner.StartRunAtSpawn();
-        do {
+        do
+        {
             player.position = _respawnPoint;
             yield return null;
         } while (_timeStartedPenalty + _penaltyTime > Time.time);

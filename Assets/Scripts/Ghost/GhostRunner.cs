@@ -15,8 +15,12 @@ public class GhostRunner : MonoBehaviour {
     private Respawn _respawn;
     [SerializeField]
     private Timer _timer;
+    [SerializeField]
+    private MusicManager _musicManager;
 
     private ReplaySystem _system;
+
+    public bool onFinalRun;
 
     private void Awake() => _system = new ReplaySystem(this);
 
@@ -38,6 +42,7 @@ public class GhostRunner : MonoBehaviour {
     {
         if (_finishLine.OnFinalRun() && !_system.playingReplay)
         {
+            onFinalRun = true;
             _system.FinishRun();
             print("Playing back recording...");
             //_timer.SetTimer(_system.currentReplayDuration);
@@ -45,6 +50,7 @@ public class GhostRunner : MonoBehaviour {
             _system.PlayRecording(RecordingType.Last, Instantiate(_ghostPrefab));
             _timer.InvertTimerColors();
             Invert?.Invoke();
+            _musicManager.SwitchSong();
         }
         else if (_finishLine.OnFinalRun() && _system.playingReplay) // player beat ghost
         {
@@ -58,6 +64,10 @@ public class GhostRunner : MonoBehaviour {
 
     private void OnReplayEnd()
     {
+        Revert?.Invoke();
+        _finishLine.ResetValues();
+        _timer.ResetTimer();
+        _musicManager.SwitchSong();
         StartCoroutine(_respawn.RespawnPlayer());
         print("Replay finished playing");
     }
@@ -67,11 +77,12 @@ public class GhostRunner : MonoBehaviour {
         if (_system.playingReplay)
         {
             _system.StopReplay();
+            _musicManager.SwitchSong();
         }
+        Revert?.Invoke();
         _system.StartRun(_recordTarget, _captureEveryNFrames);
         _finishLine.ResetValues();
         _timer.ResetTimer();
-        Revert?.Invoke();
         print("Starting run...");
     }
 }

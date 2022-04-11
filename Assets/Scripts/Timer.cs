@@ -27,7 +27,7 @@ public class Timer : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI secondSecond;
 
-    void Start()
+    void Awake()
     {
         ResetTimer();
         _initialTime = _timeDuration;

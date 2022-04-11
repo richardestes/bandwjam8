@@ -70,5 +70,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb75f8c24b282f244a3a3f9b0cf9f08f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
   _respawnPoint: {x: -12.15, y: -2.3}
-  _penaltyTime: 1
+  _penaltyTime: 0.2
+  _ghostRunner: {fileID: 0}

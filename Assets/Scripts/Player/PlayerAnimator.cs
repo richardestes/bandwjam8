@@ -18,25 +18,33 @@ namespace TarodevController {
         [SerializeField] private float _tiltSpeed = 30;
         [SerializeField, Range(1f, 3f)] private float _maxIdleSpeed = 2;
         [SerializeField] private float _maxParticleFallSpeed = -40;
+        [SerializeField] private Vector2 _crouchScaleModifier = new Vector2(1, 0.5f);
+
 
         private IPlayerController _player;
         private ParticleSystem.MinMaxGradient _currentGradient;
         private Vector2 _movement;
+        private Vector2 _defaultSpriteSize;
 
         void Awake() {
             _player = GetComponentInParent<IPlayerController>();
+
+            _defaultSpriteSize = _sprite.size;
 
             _player.OnGroundedChanged += OnLanded;
             _player.OnJumping += OnJumping;
             _player.OnDoubleJumping += OnDoubleJumping;
             _player.OnDashingChanged += OnDashing;
+            _player.OnCrouchingChanged += OnCrouching;
         }
-        
+
+
         void OnDestroy() {
             _player.OnGroundedChanged -= OnLanded;
             _player.OnJumping -= OnJumping;
             _player.OnDoubleJumping -= OnDoubleJumping;
             _player.OnDashingChanged -= OnDashing;
+            _player.OnCrouchingChanged -= OnCrouching;
         }
 
         private void OnDoubleJumping() {
@@ -45,7 +53,6 @@ namespace TarodevController {
         }
 
         private void OnDashing(bool dashing) {
-           
             if (dashing) {
                 _dashParticles.Play();
                 _dashRingTransform.up = new Vector3(_player.Input.X, _player.Input.Y);
@@ -58,12 +65,13 @@ namespace TarodevController {
         }
 
         #region Extended
-    
-        [Header("EXTENDED")]
+
+        [SerializeField] private SpriteRenderer _sprite;
         [SerializeField] private ParticleSystem _doubleJumpParticles;
-        [SerializeField] private AudioClip _doubleJumpClip,_dashClip;
-        [SerializeField] private ParticleSystem _dashParticles,_dashRingParticles;
+        [SerializeField] private AudioClip _doubleJumpClip, _dashClip;
+        [SerializeField] private ParticleSystem _dashParticles, _dashRingParticles;
         [SerializeField] private Transform _dashRingTransform;
+        [SerializeField] private AudioClip[] _slideClips;
 
         #endregion
 
@@ -79,13 +87,13 @@ namespace TarodevController {
             }
         }
 
-    
 
         private void OnLanded(bool grounded) {
             if (grounded) {
                 _anim.SetTrigger(GroundedKey);
                 _source.PlayOneShot(_footsteps[Random.Range(0, _footsteps.Length)]);
                 _moveParticles.Play();
+
                 _landParticles.transform.localScale = Vector3.one * Mathf.InverseLerp(0, _maxParticleFallSpeed, _movement.y);
                 SetColor(_landParticles);
                 _landParticles.Play();
@@ -95,8 +103,20 @@ namespace TarodevController {
             }
         }
 
+        private void OnCrouching(bool crouching) {
+            if (crouching) {
+                _sprite.size = _defaultSpriteSize * _crouchScaleModifier;
+                _source.PlayOneShot(_slideClips[Random.Range(0, _slideClips.Length)], Mathf.InverseLerp(0, 5, Mathf.Abs(_movement.x)));
+            }
+            else {
+                _sprite.size = _defaultSpriteSize;
+            }
+        }
+
         void Update() {
             if (_player == null) return;
+
+            var inputPoint = Mathf.Abs(_player.Input.X);
 
             // Flip the sprite
             if (_player.Input.X != 0) transform.localScale = new Vector3(_player.Input.X > 0 ? 1 : -1, 1, 1);
@@ -106,14 +126,16 @@ namespace TarodevController {
             _anim.transform.rotation = Quaternion.RotateTowards(_anim.transform.rotation, Quaternion.Euler(targetRotVector), _tiltSpeed * Time.deltaTime);
 
             // Speed up idle while running
-            _anim.SetFloat(IdleSpeedKey, Mathf.Lerp(1, _maxIdleSpeed, Mathf.Abs(_player.Input.X)));
-            
+            _anim.SetFloat(IdleSpeedKey, Mathf.Lerp(1, _maxIdleSpeed, inputPoint));
+
             // Detect ground color
             var groundHit = Physics2D.Raycast(transform.position, Vector3.down, 2, _groundMask);
             if (groundHit && groundHit.transform.TryGetComponent(out SpriteRenderer r)) {
                 _currentGradient = new ParticleSystem.MinMaxGradient(r.color * 0.9f, r.color * 1.2f);
                 SetColor(_moveParticles);
             }
+
+            _moveParticles.transform.localScale = Vector3.MoveTowards(_moveParticles.transform.localScale, Vector3.one * inputPoint, 2 * Time.deltaTime);
 
             _movement = _player.RawMovement; // Previous frame movement is more valuable
         }
@@ -130,6 +152,7 @@ namespace TarodevController {
             var main = ps.main;
             main.startColor = _currentGradient;
         }
+
 
         #region Animation Keys
 

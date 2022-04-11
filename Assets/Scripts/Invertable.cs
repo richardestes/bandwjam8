@@ -9,7 +9,7 @@ public class Invertable : MonoBehaviour
 
     private SpriteRenderer _sr;
 
-    private void Start()
+    private void Awake()
     {
         _sr = GetComponent<SpriteRenderer>();
     }

@@ -8,7 +8,9 @@ public class FinishLine : MonoBehaviour {
     private Vector2 _startPoint;
     private Vector2 _initialPosition;
     private Quaternion _initialRotation;
-    private bool _onFinalRun;
+    private bool _onFinalRun; 
+    private float _flippedRotation;
+
 
     public bool finishedLevel = false; // for testing, not needed once next level loads on finish
 
@@ -32,13 +34,18 @@ public class FinishLine : MonoBehaviour {
         if (!_onFinalRun) // initial run
         {
             _onFinalRun = true;
-            float newRotation = Quaternion.identity.y;
-            newRotation = newRotation * -1;
-            transform.SetPositionAndRotation(_startPoint, new Quaternion(0, newRotation, 0, 0));
+            _flippedRotation = GetNewRotation(gameObject.transform.eulerAngles.y);
+            transform.SetPositionAndRotation(_startPoint, new Quaternion(0, _flippedRotation, 0, 0));
             print("On final run");
         }
         Crossed?.Invoke();
     }
+
+    private float GetNewRotation(float oldRotation)
+    {
+        if (gameObject.transform.eulerAngles.y == 180f) return 0f;
+        else return 180f;
+    }    
 
     public void FinishLevel()
     {
