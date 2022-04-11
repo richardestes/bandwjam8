@@ -1262,6 +1262,10 @@ PrefabInstance:
       propertyPath: _respawn
       value: 
       objectReference: {fileID: 1621727882}
+    - target: {fileID: 6971476250465747317, guid: fb9bd16f1bade604195772eabbf90d03, type: 3}
+      propertyPath: _maxTilt
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7246707955098707761, guid: fb9bd16f1bade604195772eabbf90d03, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -1310,7 +1314,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7226666912149215992, guid: fb9bd16f1bade604195772eabbf90d03, type: 3}
+    - {fileID: 7246707955098707773, guid: fb9bd16f1bade604195772eabbf90d03, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: fb9bd16f1bade604195772eabbf90d03, type: 3}
 --- !u!224 &1885460874 stripped
 RectTransform:
