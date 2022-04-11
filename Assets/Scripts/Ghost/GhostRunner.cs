@@ -17,10 +17,12 @@ public class GhostRunner : MonoBehaviour {
     private Timer _timer;
     [SerializeField]
     private MusicManager _musicManager;
+    [SerializeField]
+    private LevelManager _levelManager;
+    [SerializeField]
+    private SpriteManager _spriteManager;
 
     private ReplaySystem _system;
-
-    public bool onFinalRun;
 
     private void Awake() => _system = new ReplaySystem(this);
 
@@ -42,7 +44,6 @@ public class GhostRunner : MonoBehaviour {
     {
         if (_finishLine.OnFinalRun() && !_system.playingReplay)
         {
-            onFinalRun = true;
             _system.FinishRun();
             print("Playing back recording...");
             //_timer.SetTimer(_system.currentReplayDuration);
@@ -58,16 +59,17 @@ public class GhostRunner : MonoBehaviour {
             _system.StopReplay();
             _finishLine.FinishLevel();
             _timer.StopTimer();
-            // Send Action to Level Manager to Load Next Level
+            _levelManager.LoadNextLevel();
         }
     }
 
-    private void OnReplayEnd()
+    private void OnReplayEnd() // Ghost beat you
     {
         Revert?.Invoke();
         _finishLine.ResetValues();
         _timer.ResetTimer();
         _musicManager.SwitchSong();
+        StartCoroutine(_spriteManager.DisplayLostLevelText());
         StartCoroutine(_respawn.RespawnPlayer());
         print("Replay finished playing");
     }

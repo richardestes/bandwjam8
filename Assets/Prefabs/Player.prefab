@@ -29402,7 +29402,7 @@ MonoBehaviour:
   _coyoteTimeThreshold: 7
   _jumpBuffer: 7
   _jumpEndEarlyGravityModifier: 3
-  _dashPower: 30
+  _dashPower: 35
   _dashLength: 6
   _dashEndHorizontalMultiplier: 0.25
 --- !u!114 &1123869495466279852

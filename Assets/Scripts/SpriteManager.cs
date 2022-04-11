@@ -1,19 +1,26 @@
 using TMPro;
+using System.Collections;
 using UnityEngine;
 
 public class SpriteManager : MonoBehaviour
 {
     private GameObject[] invertables;
-
     [SerializeField]
-    private TextMeshProUGUI levelText;
+    private ParticleSystem[] _playerParticles;
+    [SerializeField]
+    private Material _defaultParticles;
+    [SerializeField]
+    private Material _invertedParticles;
+    [SerializeField]
+    private TextMeshProUGUI _ghostBeatText;
+    [SerializeField]
+    private TextMeshProUGUI _levelText;
 
     void Awake()
     {
-        print("Finding invertables"); // DEBUG
         invertables = GameObject.FindGameObjectsWithTag("Invertable");
-        if (levelText) levelText.color = Color.black;
-        //print(invertables.Length); // DEBUG
+        if (_levelText) _levelText.color = Color.black;
+        _ghostBeatText.gameObject.SetActive(false);
     }
 
     private void OnEnable()
@@ -30,18 +37,18 @@ public class SpriteManager : MonoBehaviour
 
     private void ResetAll()
     {
-        print("Resetting all sprites"); // DEBUG
         if (invertables.Length <= 0) return;
         for (int i = 0; i < invertables.Length; i++)
         {
             invertables[i].GetComponent<Invertable>().ResetSprite();
         }
-        //foreach (GameObject obj in invertables)
-        //{
-        //    if (!obj) return; // Put in a null check to prevent NullReferenceException errors on each spawn
-        //    obj.GetComponent<Invertable>().ResetSprite();
-        //}
-        levelText.color = Color.black;
+        for (int i = 0; i < _playerParticles.Length; i++) // Reset particle systems
+        {
+            ParticleSystem.MainModule settings = _playerParticles[i].GetComponent<ParticleSystem>().main;
+            settings.startColor = new ParticleSystem.MinMaxGradient(Color.black);
+            _playerParticles[i].GetComponent<ParticleSystemRenderer>().material = _defaultParticles;
+        }
+        _levelText.color = Color.black;
     }
 
     private void InvertAll()
@@ -51,12 +58,20 @@ public class SpriteManager : MonoBehaviour
         {
             invertables[i].GetComponent<Invertable>().InvertSprite();
         }
-        //foreach (GameObject obj in invertables)
-        //{
-        //    //if (!obj) return; // Put in a null check to prevent NullReferenceException errors on each spawn
-        //    obj.GetComponent<Invertable>().InvertSprite();
-        //}
-        levelText.color = Color.white;
+        for (int i = 0; i < _playerParticles.Length; i++) // Reset particle systems
+        {
+            ParticleSystem.MainModule settings = _playerParticles[i].GetComponent<ParticleSystem>().main;
+            settings.startColor = new ParticleSystem.MinMaxGradient(Color.white);
+            _playerParticles[i].GetComponent<ParticleSystemRenderer>().material = _invertedParticles;
+        }
+        _levelText.color = Color.white;
+    }
+
+    public IEnumerator DisplayLostLevelText()
+    {
+        _ghostBeatText.gameObject.SetActive(!_ghostBeatText.gameObject.activeSelf);
+        yield return new WaitForSeconds(3f);
+        _ghostBeatText.gameObject.SetActive(!_ghostBeatText.gameObject.activeSelf);
     }
 
 }
