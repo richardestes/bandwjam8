@@ -43,4 +43,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8031b8cbb96e1e94db139b0e30af26b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelText: {fileID: 0}
+  _playerParticles:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _defaultParticles: {fileID: 2100000, guid: 4f5c6cb0aa6e2f54e91c737c51a00c7f, type: 2}
+  _invertedParticles: {fileID: 2100000, guid: aee6d8386f53994478d4b73a072d894c, type: 2}
+  _ghostBeatText: {fileID: 0}
+  _levelText: {fileID: 0}
+  _quarterNoteSprite: {fileID: 9093124243078701894, guid: 96d299ef39f8706429e0df4e754eb683, type: 3}
+  _eighthNoteSprite: {fileID: 4019819631856827968, guid: 96d299ef39f8706429e0df4e754eb683, type: 3}
+  _quarterNoteSpriteInv: {fileID: -8402718325799252291, guid: 26c5fb76fb030ed48a25cb9c0bd284ad, type: 3}
+  _eighthNoteSpriteInv: {fileID: 5033342339625497182, guid: 26c5fb76fb030ed48a25cb9c0bd284ad, type: 3}

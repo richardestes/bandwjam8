@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -13,10 +12,5 @@ public class PlayerManager : MonoBehaviour
     {
         if (!_cam) _cam = Camera.main.GetComponent<CameraFollow>();
         StartCoroutine(_respawn.RespawnPlayer());
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R)) SceneManager.LoadScene(0);
     }
 }

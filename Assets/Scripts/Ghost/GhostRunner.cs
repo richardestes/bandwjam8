@@ -1,4 +1,5 @@
 using TarodevGhost;
+using Tarodev;
 using System;
 using UnityEngine;
 
@@ -14,13 +15,13 @@ public class GhostRunner : MonoBehaviour {
     [SerializeField]
     private Respawn _respawn;
     [SerializeField]
-    private Timer _timer;
-    [SerializeField]
     private MusicManager _musicManager;
     [SerializeField]
     private LevelManager _levelManager;
     [SerializeField]
     private SpriteManager _spriteManager;
+    [SerializeField]
+    private PatrolPlatform _patrolPlatform;
 
     private ReplaySystem _system;
 
@@ -46,10 +47,7 @@ public class GhostRunner : MonoBehaviour {
         {
             _system.FinishRun();
             print("Playing back recording...");
-            //_timer.SetTimer(_system.currentReplayDuration);
-            //_system.PlayRecording(RecordingType.Best, Instantiate(_ghostPrefab));
             _system.PlayRecording(RecordingType.Last, Instantiate(_ghostPrefab));
-            _timer.InvertTimerColors();
             Invert?.Invoke();
             _musicManager.SwitchSong();
         }
@@ -58,7 +56,6 @@ public class GhostRunner : MonoBehaviour {
             print("LEVEL COMPLETE! BEAT THE GHOST! :}");
             _system.StopReplay();
             _finishLine.FinishLevel();
-            _timer.StopTimer();
             _levelManager.LoadNextLevel();
         }
     }
@@ -67,7 +64,6 @@ public class GhostRunner : MonoBehaviour {
     {
         Revert?.Invoke();
         _finishLine.ResetValues();
-        _timer.ResetTimer();
         _musicManager.SwitchSong();
         StartCoroutine(_spriteManager.DisplayLostLevelText());
         StartCoroutine(_respawn.RespawnPlayer());
@@ -84,7 +80,7 @@ public class GhostRunner : MonoBehaviour {
         Revert?.Invoke();
         _system.StartRun(_recordTarget, _captureEveryNFrames);
         _finishLine.ResetValues();
-        _timer.ResetTimer();
+        if (_patrolPlatform) _patrolPlatform.ResetPosition();
         print("Starting run...");
     }
 }

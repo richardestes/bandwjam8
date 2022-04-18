@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using TMPro;
 
 public class Timer : MonoBehaviour
@@ -27,6 +28,8 @@ public class Timer : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI secondSecond;
 
+    public static event Action TimerFinished;
+
     void Awake()
     {
         ResetTimer();
@@ -35,6 +38,7 @@ public class Timer : MonoBehaviour
 
     void Update()
     {
+        if (_stopped) return;
         if (_countDown && _timer > 0 && !_stopped)
         {
             _timer -= Time.deltaTime;
@@ -51,6 +55,8 @@ public class Timer : MonoBehaviour
         }
         else
         {
+            _stopped = true;
+            TimerFinished?.Invoke();
             Flash();
         }
     }
@@ -123,7 +129,7 @@ public class Timer : MonoBehaviour
     {
         if (_countDown && _timer != 0)
         {
-            //_timer = 0;
+            _timer = 0;
             UpdateTimerDisplay(_timer);
         }
 

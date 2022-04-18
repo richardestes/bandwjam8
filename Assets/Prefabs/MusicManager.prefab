@@ -43,9 +43,9 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.15
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -174,3 +174,4 @@ MonoBehaviour:
   _source: {fileID: 1781785002729254965}
   _mainSong: {fileID: 8300000, guid: d0b6fb39f3b663041ac0d4e3d3f33977, type: 3}
   _inverseSong: {fileID: 8300000, guid: cf4c6f22d39499047b33e7cfacdbfe83, type: 3}
+  playingMainSong: 0

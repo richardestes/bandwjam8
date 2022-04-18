@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TarodevController;
 using UnityEngine;
 
@@ -46,6 +47,11 @@ namespace Tarodev {
 
         public Vector3 EvaluateEffector() {
             return _change; // * _speed;
+        }
+
+        public void ResetPosition()
+        {
+            transform.position = _startPos;
         }
 
         private void OnDrawGizmosSelected() {

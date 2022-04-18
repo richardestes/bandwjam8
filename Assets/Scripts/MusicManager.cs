@@ -7,11 +7,14 @@ public class MusicManager : MonoBehaviour
     [SerializeField]
     private AudioClip _mainSong, _inverseSong;
 
+    public bool playingMainSong;
+
     // Start is called before the first frame update
     void Start()
     {
         if (_source) _source.clip = _mainSong;
         _source.Play();
+        playingMainSong = true;
     }
 
     public void SwitchSong()
@@ -20,10 +23,12 @@ public class MusicManager : MonoBehaviour
         if (_source.clip == _mainSong)
         {
             _source.clip = _inverseSong;
+            playingMainSong = false;
         }
         else
         {
             _source.clip = _mainSong;
+            playingMainSong = true;
         }
         _source.Play();
     }
@@ -32,6 +37,7 @@ public class MusicManager : MonoBehaviour
     {
         _source.Stop();
         _source.clip = _mainSong;
+        playingMainSong = true;
         _source.Play();
     }
 }

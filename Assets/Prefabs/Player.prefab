@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 272280403791686132}
   m_Layer: 0
   m_Name: Dash Ring Particles
-  m_TagString: Untagged
+  m_TagString: DashRingParticles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -975,7 +975,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 30
+        scalar: 5
         minScalar: 30
         maxCurve:
           serializedVersion: 2
@@ -1419,8 +1419,8 @@ ParticleSystem:
         m_NumAlphaKeys: 2
   UVModule:
     serializedVersion: 2
-    enabled: 0
-    mode: 0
+    enabled: 1
+    mode: 1
     timeMode: 0
     fps: 30
     frameOverTime:
@@ -1538,7 +1538,8 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 0}
+    - sprite: {fileID: 9093124243078701894, guid: 96d299ef39f8706429e0df4e754eb683, type: 3}
+    - sprite: {fileID: 4019819631856827968, guid: 96d299ef39f8706429e0df4e754eb683, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -4816,7 +4817,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0867f43889af6db499f5a463524c3095, type: 2}
+  - {fileID: 2100000, guid: 4f5c6cb0aa6e2f54e91c737c51a00c7f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4875,7 +4876,7 @@ GameObject:
   - component: {fileID: 181297972787952172}
   m_Layer: 0
   m_Name: Jump Particles
-  m_TagString: Untagged
+  m_TagString: JumpParticles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4914,7 +4915,7 @@ ParticleSystem:
   playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
-  useRigidbodyForVelocity: 0
+  useRigidbodyForVelocity: 1
   startDelay:
     serializedVersion: 2
     minMaxState: 0
@@ -5469,7 +5470,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: -0.01
+      scalar: 0.5
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -5522,7 +5523,7 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 6
     enabled: 1
-    type: 12
+    type: 19
     angle: 25
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
@@ -5593,7 +5594,7 @@ ParticleSystem:
     m_Mesh: {fileID: 0}
     m_MeshRenderer: {fileID: 0}
     m_SkinnedMeshRenderer: {fileID: 0}
-    m_Sprite: {fileID: 0}
+    m_Sprite: {fileID: 21300000, guid: 911322ab49f83dc44a75b6a3d781c84b, type: 3}
     m_SpriteRenderer: {fileID: 0}
     m_UseMeshMaterialIndex: 0
     m_UseMeshColors: 1
@@ -6282,8 +6283,8 @@ ParticleSystem:
         m_NumAlphaKeys: 2
   UVModule:
     serializedVersion: 2
-    enabled: 0
-    mode: 0
+    enabled: 1
+    mode: 1
     timeMode: 0
     fps: 30
     frameOverTime:
@@ -6401,7 +6402,7 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 0}
+    - sprite: {fileID: 21300000, guid: 911322ab49f83dc44a75b6a3d781c84b, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -9679,7 +9680,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0867f43889af6db499f5a463524c3095, type: 2}
+  - {fileID: 2100000, guid: 4f5c6cb0aa6e2f54e91c737c51a00c7f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9738,7 +9739,7 @@ GameObject:
   - component: {fileID: 3803968309047563096}
   m_Layer: 0
   m_Name: Land Particles
-  m_TagString: Untagged
+  m_TagString: LandParticles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11144,8 +11145,8 @@ ParticleSystem:
         m_NumAlphaKeys: 2
   UVModule:
     serializedVersion: 2
-    enabled: 0
-    mode: 0
+    enabled: 1
+    mode: 1
     timeMode: 0
     fps: 30
     frameOverTime:
@@ -11263,7 +11264,7 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 0}
+    - sprite: {fileID: 9093124243078701894, guid: 96d299ef39f8706429e0df4e754eb683, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -14541,7 +14542,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0867f43889af6db499f5a463524c3095, type: 2}
+  - {fileID: 2100000, guid: 4f5c6cb0aa6e2f54e91c737c51a00c7f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14738,7 +14739,7 @@ GameObject:
   - component: {fileID: 5688467945123332593}
   m_Layer: 0
   m_Name: Double Jump Particles
-  m_TagString: Untagged
+  m_TagString: DoubleJumpParticles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -16144,8 +16145,8 @@ ParticleSystem:
         m_NumAlphaKeys: 2
   UVModule:
     serializedVersion: 2
-    enabled: 0
-    mode: 0
+    enabled: 1
+    mode: 1
     timeMode: 0
     fps: 30
     frameOverTime:
@@ -16263,7 +16264,7 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 0}
+    - sprite: {fileID: 21300000, guid: 722c9c0dca593dc489afbb3216b3c06d, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -19541,7 +19542,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0867f43889af6db499f5a463524c3095, type: 2}
+  - {fileID: 2100000, guid: 4f5c6cb0aa6e2f54e91c737c51a00c7f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -19600,7 +19601,7 @@ GameObject:
   - component: {fileID: 968893912909704461}
   m_Layer: 0
   m_Name: Move Particles
-  m_TagString: Untagged
+  m_TagString: MoveParticles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -20948,8 +20949,8 @@ ParticleSystem:
         m_NumAlphaKeys: 2
   UVModule:
     serializedVersion: 2
-    enabled: 0
-    mode: 0
+    enabled: 1
+    mode: 1
     timeMode: 0
     fps: 30
     frameOverTime:
@@ -21067,7 +21068,7 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 0}
+    - sprite: {fileID: 21300000, guid: 911322ab49f83dc44a75b6a3d781c84b, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -24345,7 +24346,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0867f43889af6db499f5a463524c3095, type: 2}
+  - {fileID: 2100000, guid: 4f5c6cb0aa6e2f54e91c737c51a00c7f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -24404,7 +24405,7 @@ GameObject:
   - component: {fileID: 4088572616534889902}
   m_Layer: 0
   m_Name: Launch Particles
-  m_TagString: Untagged
+  m_TagString: LaunchParticles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -25810,8 +25811,8 @@ ParticleSystem:
         m_NumAlphaKeys: 2
   UVModule:
     serializedVersion: 2
-    enabled: 0
-    mode: 0
+    enabled: 1
+    mode: 1
     timeMode: 0
     fps: 30
     frameOverTime:
@@ -25929,7 +25930,8 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 0}
+    - sprite: {fileID: 9093124243078701894, guid: 96d299ef39f8706429e0df4e754eb683, type: 3}
+    - sprite: {fileID: 4019819631856827968, guid: 96d299ef39f8706429e0df4e754eb683, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -29207,7 +29209,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0867f43889af6db499f5a463524c3095, type: 2}
+  - {fileID: 2100000, guid: 4f5c6cb0aa6e2f54e91c737c51a00c7f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -29600,7 +29602,7 @@ GameObject:
   - component: {fileID: 2251379633043230974}
   m_Layer: 0
   m_Name: Dash Particles
-  m_TagString: Untagged
+  m_TagString: DashParticles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29871,8 +29873,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.3
-      minScalar: 0.1
+      scalar: 0.5
+      minScalar: 0.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -30948,8 +30950,8 @@ ParticleSystem:
         m_NumAlphaKeys: 2
   UVModule:
     serializedVersion: 2
-    enabled: 0
-    mode: 0
+    enabled: 1
+    mode: 1
     timeMode: 0
     fps: 30
     frameOverTime:
@@ -31067,7 +31069,8 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 0}
+    - sprite: {fileID: 9093124243078701894, guid: 96d299ef39f8706429e0df4e754eb683, type: 3}
+    - sprite: {fileID: 4019819631856827968, guid: 96d299ef39f8706429e0df4e754eb683, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -34345,7 +34348,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0867f43889af6db499f5a463524c3095, type: 2}
+  - {fileID: 2100000, guid: 4f5c6cb0aa6e2f54e91c737c51a00c7f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

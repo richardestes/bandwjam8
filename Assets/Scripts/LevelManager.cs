@@ -14,6 +14,10 @@ public class LevelManager : MonoBehaviour
     {
         _currentLevelIndex++;
         SceneManager.LoadScene(_currentLevelIndex);
-        //SceneManager.LoadSceneAsync(_currentLevelIndex);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }

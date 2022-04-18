@@ -8,14 +8,13 @@ public class DisappearingPlatform : MonoBehaviour
     [SerializeField]
     private GameObject _platform;
 
+    public bool randomizeWait;
+
     private IEnumerator Start()
     {
         while (true)
         {
-            // Randomize the wait time because
-            // in-sync disappearing platforms can
-            // be frustrating
-            _waitTime += Random.Range(0.5f, 1f);
+            if (randomizeWait) _waitTime += Random.Range(0.5f, 1f);
             yield return new WaitForSeconds(_waitTime);
             _platform.SetActive(!_platform.activeSelf);
         }

@@ -43,9 +43,10 @@ GameObject:
   - component: {fileID: 5072587073225429651}
   - component: {fileID: 5072587073225429648}
   - component: {fileID: 5072587073225429652}
+  - component: {fileID: 3180121603367845170}
   m_Layer: 6
   m_Name: Horizontal Platform
-  m_TagString: Untagged
+  m_TagString: Invertable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -182,6 +183,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &3180121603367845170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5072587073225429649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fa1b3818486656459bd86302a84c31d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _defaultSprite: {fileID: 21300000, guid: 065eabf39448bc047827b7a16bfdde5e, type: 3}
+  _invertedSprite: {fileID: 21300000, guid: 189c87938dfcac84f82fe4223979b287, type: 3}
 --- !u!1 &5072587073713510310
 GameObject:
   m_ObjectHideFlags: 0
